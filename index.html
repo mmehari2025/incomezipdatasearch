@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Median Household Income by Zip Code Lookup Tool for GPREDICT Clinical Trial Enrollment Probability Calculator</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        input { margin-bottom: 10px; padding: 5px; width: 200px; }
+        button { padding: 8px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Median Household Income by ZIP Code according to the U.S. Census Bureau's 2021 American Community Survey</h2>
+    <input type="text" id="search" placeholder="Enter ZIP code..." onkeyup="searchZip()">
+    <button onclick="goBack()">Return to GPREDICT tool</button>
+
+    <table id="incomeTable">
+        <thead>
+            <tr>
+                <th>ZIP Code</th>
+                <th>Median Income ($)</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        let incomeData = {}; // Data will be loaded from a file
+
+        async function loadIncomeData() {
+            const response = await fetch('median_income_by_zip.json'); // Load JSON file
+            incomeData = await response.json();
+            populateTable();
+        }
+
+        function populateTable() {
+            let tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = ""; // Clear table before adding new data
+
+            Object.keys(incomeData).forEach(zip => {
+                let row = document.createElement("tr");
+                row.innerHTML = `<td>${zip}</td><td>${incomeData[zip]}</td>`;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function searchZip() {
+            let input = document.getElementById("search").value.trim();
+            let tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = ""; // Clear table
+
+            Object.keys(incomeData).forEach(zip => {
+                if (zip.startsWith(input)) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `<td>${zip}</td><td>${incomeData[zip]}</td>`;
+                    tableBody.appendChild(row);
+                }
+            });
+        }
+
+        function goBack() {
+            window.location.href = "https://demanuels.github.io/workshopgpredict/";
+        }
+
+        loadIncomeData(); // Load data on page load
+    </script>
+
+</body>
+</html>
